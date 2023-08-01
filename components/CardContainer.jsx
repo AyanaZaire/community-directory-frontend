@@ -4,7 +4,7 @@ import Card from "./Card"
 function CardContainer(props) {
     //console.log(props.entries)
     const cards = props.entries.map(entry => {
-        return <Card key={entry._id} entry={entry} comment={props.comment}/>
+        return <Card key={entry._id} entry={entry} comment={props.comment} editButtonClicked={props.editButtonClicked}/>
     })
 
     return (

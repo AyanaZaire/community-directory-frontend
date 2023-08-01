@@ -4,9 +4,9 @@ function Card(props) {
     const comments = props.entry.comments.map(comment => {
         return (
             <div>
-                <p key={comment._id}>{comment.date} — {comment.body}</p>
-                <button id={props.entry._id} className="btn btn-primary" key={comment._id}>Edit</button>
-                <button id={props.entry._id} className="btn btn-primary"key={comment._id}>Delete</button>
+                <p>{comment.date} — {comment.body}</p>
+                <button datalibrary={props.entry._id} datacomment={comment._id} id="edit">Edit</button>
+                <button id={props.entry._id} className="btn btn-primary">Delete</button>
             </div>
         )
     })
