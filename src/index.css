@@ -1,7 +1,104 @@
-/* * {
-  box-sizing: border-box;
+/* default font-size is 16px - https://bootstrapcreative.com/bootstrap-text-sizes/ */
+html {
+  font-size: 12px;
 }
 
-body {
-  margin: 0;
-} */
+  body {
+    background-color:black;
+    color: white;
+    font-family: FavoritMono, sans-serif;
+    padding: 10px;
+    min-height: 400px;
+    margin-bottom: 100px;
+    clear: both;
+  }
+
+.container-fluid {
+  margin-top: 50px
+}
+
+  small, a {
+    color: #917a4f;
+  }
+
+img {
+  object-fit: cover;
+  object-position: 0 0;
+  width:150px;
+  height:150px;
+  }
+
+  /* .bi bi-zoom-in{
+    align-content: right;
+  } */
+
+
+  /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+  .row.content {height: 450px}
+
+  /* Set gray background color and 100% height */
+  .sidenav {
+    padding-top: 20px;
+    background-color: #f1f1f1;
+    height: 100%;
+  }
+
+  .navbar {
+    background-color: #000000;
+  }
+
+  .fav-btn {
+    margin: 5px;
+  }
+
+  /* Fixed show panel */
+  .fixed-panel {
+    position: fixed;
+    overflow-y: scroll;
+    top: 40px;
+    bottom: 50px;
+    padding-right: 30px;
+    padding-top: 30px;
+    padding-bottom: 50px;
+    display: none;
+  }
+
+  /* Set black background color, white text and some padding */
+  footer {
+    background-color: #555;
+    color: white;
+    padding: 15px;
+  }
+
+  #loader {
+    padding-top: 100px;
+    display:block;
+    margin:auto;
+  }
+
+  #favorites {
+    padding-bottom: 20px;
+  }
+
+  /* On small screens, set height to 'auto' for sidenav and grid */
+  @media screen and (max-width: 767px) {
+    .sidenav {
+      height: auto;
+      padding: 15px;
+    }
+
+    .row.content {
+      height: auto;
+    }
+
+    .fixed-panel {
+      background-color: #000;
+      padding-bottom: 150px;
+    }
+
+    .stop-scrolling {
+        height: 100%;
+        overflow: hidden;
+      }
+
+  }

@@ -19,9 +19,9 @@ function Main() {
     const [displaySidebar, setDisplaySidebar] = useState(false)
     const [libraryId, setlibraryId] = useState("")
 
-    function addComment(event) {
+    function addComment(event, libraryId) {
         setDisplaySidebar(prevDisplay => !prevDisplay)
-        setlibraryId(event.target.id)
+        setlibraryId(libraryId)
     }
 
     const [comment, setComment] = React.useState("")
@@ -31,9 +31,11 @@ function Main() {
         console.log("adding comment:", comment)
     }
 
+    // const [displayLibrary, setDisplayLibrary] = React.useState("")
+
     function postComment(event) {
         event.preventDefault()
-        setDisplaySidebar(prevDisplay => !prevDisplay)
+        //setDisplaySidebar(prevDisplay => !prevDisplay)
         fetch(`http://localhost:3000/libraries/${libraryId}/comments`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
@@ -42,11 +44,18 @@ function Main() {
             })
         })
         .then(response => response.json())
-        .then(json => {
-            if(!json.error) {
-                console.log("posted json", json)
+        .then(newLibrary => {
+            if(!newLibrary.error) {
+                // https://scrimba.com/learn/learnreact/notes-app-intro-coea14f76b39cf1bfb7c86de4
+                setEntries(oldEntries => oldEntries.map(oldEntry => {
+                    if(oldEntry._id == newLibrary._id) {
+                        return {...oldEntry, comments: [...oldEntry.comments, {body : comment}]}
+                    } else {
+                        return oldEntry
+                    }
+                }))
             } else {
-                alert(json.error.message)
+                alert(newLibrary.error.message)
             }
         })
     }
@@ -54,18 +63,27 @@ function Main() {
     const [commentId, setCommentId] = useState("")
     const [editButtonClicked, setEditButtonClicked] = useState(false)
 
-    const editButton = document.getElementById("edit")
+    // const editButton = document.getElementById("edit")
 
-    React.useEffect(() => {
-        if (editButton) {
-            editButton.addEventListener("click", (event) => {
-                setEditButtonClicked(prevEdit => !prevEdit)
-                setDisplaySidebar(prevDisplay => !prevDisplay) 
-                setlibraryId(event.target.getAttribute("datalibrary"))
-                setCommentId(event.target.getAttribute("datacomment"))
-            })
-        }
-    }, [editButton])
+    // React.useEffect(() => {
+    //     if (editButton) {
+    //         editButton.addEventListener("click", (event) => {
+                
+    //             setEditButtonClicked(prevEdit => !prevEdit)
+    //             setDisplaySidebar(prevDisplay => !prevDisplay) 
+    //             setlibraryId(event.target.getAttribute("datalibrary"))
+    //             setCommentId(event.target.getAttribute("datacomment"))
+    //         })
+    //     }
+    // }, [editButton])
+
+    function handleEditButton(event, libraryId, commentId) {
+        setEditButtonClicked(true)
+        // refactor to pass ids from child: https://scrimba.com/learn/learnreact/notes-app-delete-note-cg8gPwc6
+        setlibraryId(libraryId)
+        setCommentId(commentId)
+        console.log(editButtonClicked, libraryId, commentId);
+    }
 
     const [editedComment, setEditedComment] = React.useState("")
 
@@ -86,11 +104,76 @@ function Main() {
             })
         })
         .then(response => response.json())
+        .then(updatedLibrary => {
+            if(!updatedLibrary.error) {
+                console.log("posted json", updatedLibrary)
+                setEditButtonClicked(prevEdit => !prevEdit)
+                // setDisplaySidebar(prevDisplay => !prevDisplay)
+                setEntries(oldEntries => oldEntries.map(oldEntry => {
+                    if(oldEntry._id == updatedLibrary._id) {
+                        // https://stackoverflow.com/questions/71005652/react-state-update-a-nested-array-with-objects-based-on-the-id-when-iterated
+                        let tempComments = [...oldEntry.comments]
+                        let index = updatedLibrary.comments.findIndex(comment => comment._id == commentId)
+                        console.log(index);
+                        if(index != -1) {
+                            tempComments[index] = {
+                                ...tempComments[index],
+                                body : editedComment
+                            }
+                        }
+                        return {...oldEntry, comments: tempComments}
+                    } else {
+                        return oldEntry
+                    }
+                }))
+            } else {
+                alert(updatedLibrary.error.message)
+            }
+        })
+    }
+
+    // const deleteButtons = document.querySelectorAll(".delete")
+    // console.log(deleteButtons);
+
+    // React.useEffect(() => {
+    //     if (deleteButtons) {
+    //         for(let i=0; i < deleteButtons.length; ++i) {
+    //             deleteButtons[i].addEventListener("click", (event) => {
+    //                 console.log("button clicked");
+    //                 setlibraryId(event.target.getAttribute("datalibrary"))
+    //                 setCommentId(event.target.getAttribute("datacomment"))
+    //                 console.log(libraryId, commentId);
+    //                 handleDelete()
+    //             })
+    //         }
+    //     }
+    // })
+
+    function handleDeleteButton(event, libraryId, commentId) {
+        // setlibraryId(event.target.getAttribute("datalibrary"))
+        // setCommentId(event.target.getAttribute("datacomment"))
+        handleDelete(event, libraryId, commentId);
+    }
+
+    function handleDelete(event, libraryId, commentId) {
+        event.stopPropagation()
+        console.log(libraryId, commentId);
+        fetch(`http://localhost:3000/libraries/${libraryId}/comment/${commentId}`, {
+            method: "DELETE"
+        })
+        .then(response => response.json())
         .then(json => {
             if(!json.error) {
-                console.log("posted json", json)
-                setEditButtonClicked(prevEdit => !prevEdit)
-                setDisplaySidebar(prevDisplay => !prevDisplay)
+                console.log("empty object", json)
+                setEntries(oldEntries => oldEntries.map(oldEntry => {
+                    //https://scrimba.com/learn/learnreact/notes-app-delete-note-cg8gPwc6
+                    return {...oldEntry, comments: oldEntry.comments.filter(comment => comment._id !== commentId)}
+                    // if(oldEntry._id == newLibrary._id) {
+                    //     return {...oldEntry, comments: [...oldEntry.comments, {body : comment}]}
+                    // } else {
+                    //     return oldEntry
+                    // }
+                }))
             } else {
                 alert(json.error.message)
             }
@@ -98,11 +181,15 @@ function Main() {
     }
 
     return (
-        <div className="container">
+        <div className="container-fluid">
             <div className="row">
                 {/* <h1>Main Component</h1> */}
-                <CardContainer entries={allEntries} comment={addComment} className="content"/>
+                <CardContainer entries={allEntries} comment={addComment} className="content" delete={handleDelete}/>
                 {displaySidebar && <Sidebar 
+                    editButton={handleEditButton}
+                    deleteButton={handleDeleteButton}
+                    entries={allEntries}
+                    libraryId = {libraryId}
                     handleComment={handleNewComment} 
                     handleEditedComment={handleEditedComment} 
                     postComment={postComment} 
