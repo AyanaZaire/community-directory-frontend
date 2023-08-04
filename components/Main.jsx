@@ -19,7 +19,7 @@ function Main() {
     const [displayLibrary, setDisplayLibrary] = useState("")
 
     function addComment(event, libraryId) {
-        setDisplaySidebar(prevDisplay => !prevDisplay)
+        setDisplaySidebar(true)
         setlibraryId(libraryId)
         const currentLibrary = allEntries.find(library => library._id == libraryId)
         setDisplayLibrary(currentLibrary)
@@ -35,6 +35,8 @@ function Main() {
     function postComment(event) {
         event.preventDefault()
         //setDisplaySidebar(prevDisplay => !prevDisplay)
+        // refactor to use controlled form: https://stackoverflow.com/questions/43922508/clear-and-reset-form-input-fields
+        document.getElementById("comment-form").reset();
         fetch(`http://localhost:3000/libraries/${libraryId}/comments`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
@@ -64,26 +66,29 @@ function Main() {
 
     const [commentId, setCommentId] = useState("")
     const [editButtonClicked, setEditButtonClicked] = useState(false)
+    const [commentToEdit, setCommentToEdit] = useState("")
 
-
-    function handleEditButton(event, libraryId, commentId) {
-        setEditButtonClicked(true)
+    function handleEditButton(event, libraryId, commentId, commentBody) {
+        setEditButtonClicked(prevEdit => !prevEdit)
         // refactor to pass ids from child: https://scrimba.com/learn/learnreact/notes-app-delete-note-cg8gPwc6
         setlibraryId(libraryId)
         setCommentId(commentId)
-        console.log(editButtonClicked, libraryId, commentId);
+        setCommentToEdit(commentBody)
+        console.log(editButtonClicked, libraryId, commentId, commentToEdit);
     }
 
     const [editedComment, setEditedComment] = React.useState("")
 
     function handleEditedComment(event) {
-        console.log(event.target.value);
         setEditedComment(event.target.value)
         console.log("edited comment:", editedComment)
     }
 
     function editComment(event) {
         event.preventDefault()
+        // https://stackoverflow.com/questions/43922508/clear-and-reset-form-input-fields
+        // refactor to use controlled form
+        document.getElementById("comment-form").reset();
         console.log(libraryId, commentId);
         fetch(`http://localhost:3000/libraries/${libraryId}/comment/${commentId}`, {
             method: "PUT",
@@ -95,8 +100,6 @@ function Main() {
         .then(response => response.json())
         .then(updatedLibrary => {
             if(!updatedLibrary.error) {
-                console.log("posted json", updatedLibrary)
-                setEditButtonClicked(prevEdit => !prevEdit)
                 // setDisplaySidebar(prevDisplay => !prevDisplay)
                 setEntries(oldEntries => oldEntries.map(oldEntry => {
                     if(oldEntry._id == updatedLibrary._id) {
@@ -121,6 +124,14 @@ function Main() {
         })
     }
 
+    // function submitted() {
+    //     setCommentToEdit("")
+    // }
+
+    function close() {
+        setDisplaySidebar(prevDisplay => !prevDisplay)
+    }
+
     function handleDeleteButton(event, libraryId, commentId) {
         if (libraryId && commentId) {
             console.log("we good brian! we good!");
@@ -141,11 +152,6 @@ function Main() {
                 setEntries(oldEntries => oldEntries.map(oldEntry => {
                     //https://scrimba.com/learn/learnreact/notes-app-delete-note-cg8gPwc6
                     return {...oldEntry, comments: oldEntry.comments.filter(comment => comment._id !== commentId)}
-                    // if(oldEntry._id == newLibrary._id) {
-                    //     return {...oldEntry, comments: [...oldEntry.comments, {body : comment}]}
-                    // } else {
-                    //     return oldEntry
-                    // }
                 }))
             } else {
                 alert(json.error.message)
@@ -159,7 +165,8 @@ function Main() {
                 {/* <h1>Main Component</h1> */}
                 <CardContainer entries={allEntries} comment={addComment} className="content" delete={handleDelete}/>
                 {displaySidebar && <Sidebar 
-                    newComment = {newComment}
+                    close={close}
+                    commentToEdit={commentToEdit}
                     editButton={handleEditButton}
                     deleteButton={handleDeleteButton}
                     entries={allEntries}

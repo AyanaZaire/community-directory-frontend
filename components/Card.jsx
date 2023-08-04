@@ -15,16 +15,14 @@ function Card(props) {
             <div className="card h-100 border-light">
                 <img src={props.entry.image} className="card-img-top" alt="..." />
                 <div className="card-body">
-                    <h3 className="card-title">{props.entry.name}<span className="badge rounded-pill text-bg-dark">{props.entry.year === "" ? <small>Year Unknown</small> : <small>{props.entry.year}</small>}<br/></span></h3>
+                    <h3 className="card-title">{props.entry.name}</h3>
+                    <span className="badge rounded-pill text-bg-dark">{props.entry.area}</span>
+                    {props.entry.year && <span className="badge rounded-pill text-bg-dark">{props.entry.year}</span>}
+                    {props.entry.aa_town && <span className="badge rounded-pill text-bg-dark">Black Incorporated Town</span>}
+                    <span className="badge rounded-pill text-bg-dark"><a href={props.entry.website} className="card-link">Website</a></span>
                     <p className="card-text">{props.entry.address}</p>
-                    {/* <p className="card-text">{props.entry.description}</p> */}
-                    <p className="card-text">{props.entry.area}</p>
-                    <p className="card-text">{props.entry.area_director}</p>
-                    {props.entry.aa_town ? <small>TRUE</small> : <small>FALSE</small>}<br/>
-                    <a href={props.entry.website} className="card-link">Website</a><br/>
-                    <button id={props.entry._id} onClick={event => props.comment(event, props.entry._id)} className="btn btn-primary">Comment</button><br/><br/>
-                    {/* <h5>Comments:</h5>
-                    {comments} */}
+                    <p className="card-text"><small className="text-body-secondary">Area Director: {props.entry.area_director}</small></p>
+                    <button id={props.entry._id} onClick={event => props.comment(event, props.entry._id)} className="btn btn-outline-dark">Comment</button>
                 </div>
             </div>
         </div>
