@@ -9,7 +9,7 @@ function Main() {
     
     // fetch all entries from database and pass as props to card container     
     React.useEffect(() => {
-        fetch("http://localhost:3000/libraries")
+        fetch("https://libraries-of-pg-de91a8f6115c.herokuapp.com/libraries")
         .then(response => response.json())
         .then(entries => setEntries(entries))
     }, [])
@@ -37,7 +37,7 @@ function Main() {
         //setDisplaySidebar(prevDisplay => !prevDisplay)
         // refactor to use controlled form: https://stackoverflow.com/questions/43922508/clear-and-reset-form-input-fields
         document.getElementById("comment-form").reset();
-        fetch(`http://localhost:3000/libraries/${libraryId}/comments`, {
+        fetch(`https://libraries-of-pg-de91a8f6115c.herokuapp.com/libraries/${libraryId}/comments`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
@@ -90,7 +90,7 @@ function Main() {
         // refactor to use controlled form
         document.getElementById("comment-form").reset();
         console.log(libraryId, commentId);
-        fetch(`http://localhost:3000/libraries/${libraryId}/comment/${commentId}`, {
+        fetch(`https://libraries-of-pg-de91a8f6115c.herokuapp.com/libraries/${libraryId}/comment/${commentId}`, {
             method: "PUT",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
@@ -142,7 +142,7 @@ function Main() {
     function handleDelete(event, libraryId, commentId) {
         event.stopPropagation()
         console.log(libraryId, commentId);
-        fetch(`http://localhost:3000/libraries/${libraryId}/comment/${commentId}`, {
+        fetch(`https://libraries-of-pg-de91a8f6115c.herokuapp.com/libraries/${libraryId}/comment/${commentId}`, {
             method: "DELETE"
         })
         .then(response => response.json())
