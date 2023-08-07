@@ -100,7 +100,7 @@ function Main() {
         .then(response => response.json())
         .then(updatedLibrary => {
             if(!updatedLibrary.error) {
-                // setDisplaySidebar(prevDisplay => !prevDisplay)
+                setEditButtonClicked(prevEdit => !prevEdit)
                 setEntries(oldEntries => oldEntries.map(oldEntry => {
                     if(oldEntry._id == updatedLibrary._id) {
                         // https://stackoverflow.com/questions/71005652/react-state-update-a-nested-array-with-objects-based-on-the-id-when-iterated
